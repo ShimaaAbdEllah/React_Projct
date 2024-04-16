@@ -1,6 +1,4 @@
 import { React, useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComment } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import DeleteComponent from "./delete";
 import UpdateComponent from "./update";
