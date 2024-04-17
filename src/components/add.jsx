@@ -7,11 +7,11 @@ import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import EditIcon from "@mui/icons-material/Edit";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faInfo, faImage } from "@fortawesome/free-solid-svg-icons";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
-export default function OpenIconSpeedDial({ onPostSuccess }) {
+export default function OpenIconSpeedDial({ onPostSuccess, posts, setPosts }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
@@ -64,17 +64,17 @@ export default function OpenIconSpeedDial({ onPostSuccess }) {
     event.preventDefault();
 
     if (!blogTitleValues.blogTitle) {
-      toast.warning("Title is required.");
+      alert("Title is required!");
       return;
     }
 
     if (!blogImageValues.blogImg) {
-      toast.warning("Image is required.");
+      alert("Image is required!");
       return;
     }
 
     if (!descriptionValues.description) {
-      toast.warning("Description is required.");
+      alert("Description is required!");
       return;
     }
 
@@ -87,22 +87,20 @@ export default function OpenIconSpeedDial({ onPostSuccess }) {
 
       const blog = response.data;
       setBlogData(blog);
-
+      // setPosts([...posts, blog]);
+      console.log(posts, blog);
       const existingPostIds =
         JSON.parse(sessionStorage.getItem("postId")) || [];
       existingPostIds.push(blog.id);
       sessionStorage.setItem("postId", JSON.stringify(existingPostIds));
 
-      toast.success("Post blog successfull");
+      // toast.success("Post blog successfull");
       handleClose();
 
       if (onPostSuccess) {
         onPostSuccess(blog);
       }
-    } catch (error) {
-      console.log(error);
-      toast.error("Post blog failed. Please try again.");
-    }
+    } catch (error) {}
   };
 
   const style = {

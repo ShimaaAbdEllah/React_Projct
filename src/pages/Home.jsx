@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import NavBar from "../components/navBar.jsx";
 import Posts from "../components/posts.jsx";
 import Dial from "../components/add.jsx";
-import Footer from "../components/footer.jsx";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
@@ -15,14 +12,16 @@ export default function Home() {
 
   return (
     <>
-      <ToastContainer />
       <div>
         <div>
           <NavBar />
-          <Posts posts={posts} />
-          <Footer />
+          <Posts posts={posts} setPosts={setPosts} />
         </div>
-        <Dial onPostSuccess={handlePostSuccess} />
+        <Dial
+          onPostSuccess={handlePostSuccess}
+          posts={posts}
+          setPosts={setPosts}
+        />
       </div>
     </>
   );
