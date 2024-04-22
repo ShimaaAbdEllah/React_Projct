@@ -62,6 +62,7 @@ export default function login() {
         localStorage.setItem("userName", user.userName);
         localStorage.setItem("email", user.email);
         localStorage.setItem("userImage", user.userImage);
+        localStorage.setItem("userId", user.id);
         toast.success("Login successfull!");
         navigate("/Home");
       } else {

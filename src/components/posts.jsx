@@ -7,10 +7,14 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function Posts({ posts, setPosts }) {
   const [loading, setLoading] = useState(false);
+  const [myPosts, setMyPosts] = useState([]);
+
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     async function getAllPosts() {
       setLoading(true);
+
       const { data } = await axios.get("http://localhost:3000/posts");
       setLoading(false);
       setPosts(data);
@@ -18,6 +22,17 @@ export default function Posts({ posts, setPosts }) {
 
     getAllPosts();
   }, []);
+
+  useEffect(() => {
+    async function getUserPosts() {
+      const response = await axios.get(
+        `http://localhost:3000/users?id=${userId}`
+      );
+      setMyPosts(response.data[0].postsOfUser);
+    }
+
+    getUserPosts();
+  }, [posts]);
 
   const handleDelete = async (deletedPostId) => {
     try {
@@ -46,8 +61,7 @@ export default function Posts({ posts, setPosts }) {
         posts.map((post) => (
           <div
             key={post.id}
-            className="flex flex-col justify-center items-center gap-5 pt-5"
-          >
+            className="flex flex-col justify-center items-center gap-5 pt-5">
             <div>
               <img src={post.image} alt="" className="rounded-xl" />
             </div>
@@ -59,7 +73,7 @@ export default function Posts({ posts, setPosts }) {
             </div>
             <div className="border-b border-blue-700 w-3/6 opacity-30"></div>
             <div className="flex gap-2">
-              {sessionStorage.getItem("postId")?.includes(post.id) && (
+              {myPosts.includes(post.id) && (
                 <>
                   <DeleteComponent
                     postId={post.id}

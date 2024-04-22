@@ -10,10 +10,23 @@ import { faPen, faInfo, faImage } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-export default function OpenIconSpeedDial({ onPostSuccess, posts, setPosts }) {
+export default function OpenIconSpeedDial({ posts, setPosts }) {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const isLoggedIn = localStorage.getItem("userName") !== null;
+  const userId = (localStorage.getItem("userId"));
+
+  console.log("userId", userId);
+
   const handleOpen = () => {
+    console.log(isLoggedIn);
+    if (!isLoggedIn) {
+      window.console.log("not logged in");
+      navigate("/login");
+    }
+
     setOpen(true);
   };
 
@@ -86,21 +99,29 @@ export default function OpenIconSpeedDial({ onPostSuccess, posts, setPosts }) {
       });
 
       const blog = response.data;
+      const responseToGetUserPosts = await axios.get(
+        `http://localhost:3000/users?id=${userId}`
+      );
+
+      console.log(responseToGetUserPosts);
+      const userPosts = responseToGetUserPosts.data[0].postsOfUser;
+
+      const responseToAddPostToUser = await axios.patch(
+        `http://localhost:3000/users/${userId}`,
+        {
+          postsOfUser: [...userPosts, blog.id],
+        }
+      );
+
       setBlogData(blog);
       // setPosts([...posts, blog]);
-      console.log(posts, blog);
-      const existingPostIds =
-        JSON.parse(sessionStorage.getItem("postId")) || [];
-      existingPostIds.push(blog.id);
-      sessionStorage.setItem("postId", JSON.stringify(existingPostIds));
+      setPosts((prevPosts) => [...prevPosts, blog]);
 
       // toast.success("Post blog successfull");
       handleClose();
-
-      if (onPostSuccess) {
-        onPostSuccess(blog);
-      }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
   };
 
   const style = {
@@ -128,8 +149,7 @@ export default function OpenIconSpeedDial({ onPostSuccess, posts, setPosts }) {
             position: "fixed",
             bottom: 25,
             right: 20,
-          }}
-        >
+          }}>
           <SpeedDial
             ariaLabel=""
             sx={{
@@ -145,24 +165,21 @@ export default function OpenIconSpeedDial({ onPostSuccess, posts, setPosts }) {
                   bgcolor: "#172554",
                 },
               },
-            }}
-          ></SpeedDial>
+            }}></SpeedDial>
         </Box>
 
         <Modal
           open={open}
           onClose={handleClose}
           aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
+          aria-describedby="modal-modal-description">
           <form onSubmit={handleSubmit}>
             <Box sx={style}>
               <Typography
                 id="modal-modal-title"
                 variant="h6"
                 component="h2"
-                className="text-center "
-              >
+                className="text-center ">
                 Share your blog
               </Typography>
 

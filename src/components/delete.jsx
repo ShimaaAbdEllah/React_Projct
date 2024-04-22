@@ -9,7 +9,20 @@ import "react-toastify/dist/ReactToastify.css";
 export default function DeleteComponent({ postId, onDelete, posts, setPosts }) {
   const deletePost = async () => {
     try {
+      const userId = localStorage.getItem("userId");
+
       await axios.delete(`http://localhost:3000/posts/${postId}`);
+      const responseToGetUserPosts = await axios.get(
+        `http://localhost:3000/users?id=${userId}`
+      );
+      const userPosts = responseToGetUserPosts.data[0].postsOfUser;
+      console.log(userPosts, postId);
+      const responseToRemovePostFromUser = await axios.patch(
+        `http://localhost:3000/users/${userId}`,
+        {
+          postsOfUser: userPosts.filter((post) => post !== postId),
+        }
+      );
       onDelete(postId);
       toast.success("Deleted post successfull");
       let newPosts = posts.filter((post) => post.id !== postId);
@@ -26,8 +39,7 @@ export default function DeleteComponent({ postId, onDelete, posts, setPosts }) {
           variant="outlined"
           onClick={deletePost}
           color="error"
-          startIcon={<DeleteIcon />}
-        >
+          startIcon={<DeleteIcon />}>
           Delete
         </Button>
       </Stack>

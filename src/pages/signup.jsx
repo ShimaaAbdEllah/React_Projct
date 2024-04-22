@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import img from "../assets/Sign up-rafiki.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {  faImage } from "@fortawesome/free-solid-svg-icons";
+import { faImage } from "@fortawesome/free-solid-svg-icons";
 import { IconButton } from "@mui/material";
-import {  Visibility } from "@mui/icons-material";
+import { Visibility } from "@mui/icons-material";
 import { VisibilityOff } from "@mui/icons-material";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -148,6 +148,7 @@ export default function register() {
         userImage: userImageValues.userImage,
         email: emailValues.email,
         password: passwordValues.password,
+        postsOfUser: [],
       });
 
       console.log(response);
